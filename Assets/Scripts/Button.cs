@@ -6,20 +6,20 @@ using UnityEngine.UI;
 public class Button : MonoBehaviour
 {
     public Text _buttonText;
-    // Start is called before the first frame update
-    void Start()
+    
+    public Manager calcManager
     {
-        
+        get
+        {
+            if (_calcManager == null)
+                _calcManager = GetComponentInParent<Manager>();
+            return _calcManager;
+        }
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
+    static Manager _calcManager;
+    
     public void OnTap()
     {
-        Debug.Log("Tapped: " + _buttonText.text);
+        calcManager.onButton(_buttonText.text[0]);
     }
 }
