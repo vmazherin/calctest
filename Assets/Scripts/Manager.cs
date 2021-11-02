@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -37,7 +38,7 @@ public class Manager : MonoBehaviour
     {
         if (!errorDisplayed)
         {
-            _numbers.text = currentVal.ToString();
+            _numbers.text = currentVal.ToString().Replace(',','.');
         }
         displayValid = false; 
         
@@ -95,7 +96,14 @@ public class Manager : MonoBehaviour
                 {
                     _numbers.text = "";
                 }
-                _numbers.text += caption;
+                if (caption == '.')
+                {
+                    if (!_numbers.text.Contains(".")) {
+                        _numbers.text += caption;
+                    }
+   
+                } else { _numbers.text += caption; } 
+               
                 displayValid = true;
             }
         }
@@ -105,19 +113,19 @@ public class Manager : MonoBehaviour
         }
         else if(caption == '±')
         {
-            currentVal = -double.Parse(_numbers.text);
+            currentVal = -double.Parse(_numbers.text,CultureInfo.InvariantCulture);
             numbersUpdate();
             specialAction = true;
         }
         else if(caption == '%')
         {
-            currentVal = double.Parse(_numbers.text) / 100.0d;
+            currentVal = storedVal * (double.Parse(_numbers.text) / 100d);
             numbersUpdate();
             specialAction = true;
         }
         else if(displayValid || storedOperator == '=' || specialAction)
         {
-            currentVal = double.Parse(_numbers.text);
+            currentVal = double.Parse(_numbers.text, CultureInfo.InvariantCulture);
             displayValid = false;
             if(storedOperator != ' ')
             {
@@ -129,6 +137,11 @@ public class Manager : MonoBehaviour
             storedVal = currentVal;
             numbersUpdate();
             specialAction = false;
+        }
+        else if (caption == '+' || caption == '-' || caption == 'x' || caption == '/')
+        {
+            storedOperator = caption;
+            _operator.text = caption.ToString();
         }
     }
 }
